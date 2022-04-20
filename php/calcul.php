@@ -5,12 +5,12 @@
 // Dans un fichier « index.php », récupérer la fonction calculAire() définie dans
 // « calcul.php » et exécuter la. 
 
-function calculAire(int $longeur, int $largeur): int
+function calculAire(int|float $longeur, int|float $largeur): int|float
 {
     return $longeur * $largeur;
 }
 
-$air = calculAire(5, 8);
+
 //echo $air;
 
 
