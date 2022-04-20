@@ -92,8 +92,8 @@ echo "{$clients['Particuliers'][2][0]} is {$clients['Particuliers'][2][1]} years
 //Afficher le tableau avec le fonction PHP « print_r() ».
 
 $persons = [
-    'Por' => 'Anda'
-    'Minka' => 'Maija'
-    'Fab' => 'Jordan' 
-    'Robez'=>'Kay'
-]
+    'Por' => ['Anda', 28, 'Riga' ],
+    'Minka' => ['Maija', 15, 'London'],
+    'Fab' => ['Jordan', 43, 'Prague'], 
+    'Robez'=> ['Kay', 67, 'Moscow']
+];

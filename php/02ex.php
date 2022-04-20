@@ -192,11 +192,17 @@ echo '<br>';
     endforeach;
     ?>
 </ol>
+
+<p>
+La couleur Cyan à pour RGB: <?php echo $couleurs['Cyan']['rgb']; ?>
+</p>
     
 </body>
 </html>
 
 <?php
+echo '<hr>';
+echo '<br>';
 
 // Ex2#3  Dans une seconde liste, vous devez afficher le nom de la couleur et son code hexadécimal à côté
 
