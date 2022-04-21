@@ -1,0 +1,32 @@
+body {
+    font-family: sans-serif;
+}
+
+.container-form {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin-top: 200px;
+}
+
+.output-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.error {
+    color: red;
+    font-size: 0.8rem;
+}
+
+a {
+    text-decoration: none;
+    font-size: 0.8rem;
+    color: grey;
+}
+
+a:hover {
+    color: black;
+}
