@@ -1,0 +1,429 @@
+LARP  algoritmu programma, strada tikai uz windows
+https://larp.marcolavoie.ca/fr/
+new  / pseudo code.
+
+NEW     nAME/ INSTEAD OF module 1 RAKSTRIR SAVAS FUNKCIJAS NOSAUKUMU.
+uzrakstit funkciju
+use function in Module1
+
+
+variable = valeur
+'=' est operator d affetion
+
+is not   !=  vai <>
+AND    OR
+
+SYNTAX de LARP
+---------------
+START END
+
+*01*
+write "What is your name :"
+read userName
+write "Hello " , userName
+write "Hello " , userName , " your surname is " , userSurname
+
+Execute code via player and console.
+
+*02*
+write "Write two numbers"
+read a
+read b
+
+result = a * b 
+IF result > 20 THEN
+    WRITE " Result is higher than 20"
+ENDIF
+
+*03*
+
+START
+
+write "What is your age :"
+read userAge
+
+IF userAge >= 18 THEN
+WRITE "You will watch 'Evil Dead'"
+
+ELSE IF userAge > 13 THEN
+WRITE   "You will watch 'Matrix'"
+   
+ELSE
+WRITE    "You will watch 'Action Man'"
+
+ENDIF     
+END
+--->>
+START
+
+write "What is your age :"
+read userAge
+
+IF userAge <= 13 THEN
+WRITE "You will watch 'Action Man'"
+
+ELSE IF userAge > 13 AND userAge < 18  THEN
+WRITE   "You will watch 'Matrix'"
+   
+ELSE
+WRITE    "You will watch 'Evil Dead'"
+
+ENDIF     
+END
+
+*04*
+
+START
+
+write "write first number :"
+read numA
+
+
+write "write second number :"
+read numB
+
+write "write operator + - * or / :"
+read operator
+
+IF operator = "+"  THEN
+WRITE numA + numB
+
+ELSE IF operator = "-"  THEN
+WRITE numA - numB
+
+ELSE IF operator = "*"  THEN
+WRITE numA * numB
+
+ELSE IF operator = "/" THEN
+WRITE numA / numB
+
+ELSE
+WRITE  "This Operator does not exist" 
+   
+ENDIF     
+ END
+
+*05*
+WHILE LOOP
+----------
+
+START                                            
+    WRITE "Are you ok?"
+    READ response
+
+    WHILE response <> "y" AND response <> "n" DO
+        WRITE "Tell me, are you ok ?"
+        READ response
+    ENDWHILE    
+ END
+
+*06*
+
+START                                            
+    WRITE "Are you ok?"
+    READ response
+
+    WHILE response <> "y" AND response <> "n" DO
+        WRITE "Tell me, are you ok ?"
+        READ response  (without this , it becomes infinit loop)
+    ENDWHILE   
+
+    IF response = "y" THEN
+        WRITE "Great!"
+    ELSE
+        WRITE "Come on , let's talk!"
+    ENDIF 
+ END
+
+*07*
+START                                            
+    WRITE "Give me a number"
+    READ number
+
+    WHILE number < 0 OR number > 10 DO
+        WRITE "Give me a number"
+        READ number
+    ENDWHILE   
+
+    WRITE "Great!"      
+ END
+
+--------  vai
+
+ IF number  >= 0 AND number <= 5 THEN   
+ 	WRITE "OK!"
+ ELSE 
+ 	WRITE "Great!"
+ ENDIF  
+
+
+*08*   
+START                                            
+    WRITE "Give me a number"
+    READ number
+     
+
+    WHILE number != 0 AND number > 0 DO             
+        number = number - 1
+        WRITE number           
+    ENDWHILE     
+   
+  END
+
+
+*09*   
+START 
+    secretNumber = 56
+                                           
+    WRITE "Guess the number :"
+    READ number
+     
+
+    WHILE number != secretNumber DO      
+        IF number > secretNumber THEN
+            WRITE " Your number is higher than the secret number"
+        ELSE
+            WRITE "Your number is smaller than the secret number"
+        ENDIF      
+            
+        READ number
+    ENDWHILE    
+
+    WRITE "Bravo!"     
+  
+ END
+
+----------------
+FOR LOOP
+
+*10*
+START 
+     limit = 0
+
+    WHILE limit != 20 DO
+        WRITE "Here is the limit", limit
+        limit = limit + 1
+    ENDWHILE
+
+    FOR counter = 1 TO 20 DO
+        WRITE  "Here is the counter " , counter
+    ENDFOR
+  
+ END
+
+ARRAY
+----------
+*11*
+START 
+
+    table = [12, "String", true, 23]
+    WRITE table   no because to read array need to use only loop, otherwise cannot read.
+   
+ END
+
+*12*
+START 
+
+    table = [12, "String", true, 23]
+    FOR counter = 1 TO 4 DO
+      WRITE table[counter]
+    ENDFOR
+      
+ END
+
+*13*
+START 
+
+    table = [12, "String", true, 23, 25]
+    FOR counter = 1 TO 4 DO   (One round of loops is iteration)
+      WRITE table[counter]
+    ENDFOR
+      
+ END
+
+START 
+
+    table = [12, "String", 23, 25]
+    FOR counter = 1 TO 4 DO
+      WRITE table[counter]
+    
+    IF table[counter] = 23 THEN
+        WRITE "Found!"
+    ENDIF
+
+  ENDFOR
+      
+ END    
+
+*14*
+sum of array
+
+START        
+     
+        table = [3, 4, 5, 6, 7]
+        sum = 0
+
+        FOR counter = 1 TO 5 DO 
+        sum = sum + table[counter]  
+
+        WRITE sum
+        ENDFOR                         
+   
+ END  
+
+*15*
+START        
+    notes = []
+
+    WRITE "How many notes you'll have ?"
+    READ limit
+
+    WRITE "Insert notes :"
+    
+    FOR counter = 1 TO limit DO
+        READ notes[counter]
+    ENDFOR  
+
+    WRITE notes                     
+   
+ END
+//  result [ 5 5 7 8 9 ]  
+
+*16*
+
+ -----> this calculation has error somewhere
+START        
+    table = []
+    notesCounter = 0
+       
+
+    WRITE "How many notes you'll have ?"
+    READ limit
+
+    WRITE "Insert notes :"
+       
+
+    FOR counter = 1 TO limit DO
+    READ table[counter]
+    ENDFOR   
+    WRITE table
+
+    sum = 0
+    FOR  counter = 1 TO limit DO
+    sum = sum + table[counter]
+    average = sum/limit
+    WRITE  average
+    ENDFOR
+
+     IF counter > average THEN
+     notesCounter = notesCounter + 1
+     WRITE notesCounter
+     ENDIF                       
+   
+ END    
+
+----------> filled exercises with a bit different consignes
+
+START        
+    notes = []
+    average = 0               
+
+    WRITE "How many notes you'll have ?"
+    READ limit
+
+    WRITE "Insert notes :"
+       
+    FOR counter = 1 TO limit DO
+      READ notes[counter]
+
+        IF notes[counter] > 10 THEN
+        average = average + 1    
+         ENDIF 
+
+     ENDFOR  
+
+
+    WRITE "There is " , average , " notes above the average"                      
+   
+ END     
+
+*17*   
+
+MULTIDIMENSIONAL TABLE (2)
+array in array
+
+START        
+
+        table = [
+            [10, "Aube"],
+            [89, "Yonne"]
+        ]  
+
+WRITE  table[2][1]      (// to read 89)                   
+  
+to read one dimensional array 
+
+
+        FOR counter = 1 TO 2 DO
+            WRITE table[counter]
+        ENDFOR   
+
+to read second dimension of array there will be a loop in a loop
+
+        FOR counter = 1 TO 2 DO
+           FOR index = 1 TO 2 DO
+                WRITE table[counter][index]
+            ENDFOR
+        ENDFOR  
+
+ END   
+
+*18*
+
+START       
+   
+        numbers = [ [10, 45],[56, 2], [23, 36], [3, 6], [57, 24] ]   
+        highestValue = 0                
+
+        FOR counter = 1 TO 5 DO
+           FOR index = 1 TO 2 DO
+             IF numbers [counter][index] > highestValue THEN
+             highestValue = numbers [counter][index]  
+                ENDIF               
+             ENDFOR          
+        ENDFOR  
+     WRITE highestValue    
+   
+ END  
+
+-----> indicate also the table it comes from
+
+START       
+   
+        numbers = [ [10, 45],[56, 2], [23, 36], [3, 6], [57, 24] ]   
+        highestValue = 0   
+        table = 0             
+
+        FOR counter = 1 TO 5 DO
+           FOR index = 1 TO 2 DO
+             IF numbers [counter][index] > highestValue THEN
+             highestValue = numbers [counter][index] 
+                table = counter 
+
+                ENDIF               
+             ENDFOR          
+        ENDFOR  tablecounter   
+  
+ END        
+
+
+ 
+
+
+
+
+
+
+
+
+

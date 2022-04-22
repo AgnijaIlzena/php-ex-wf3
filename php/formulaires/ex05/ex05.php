@@ -24,15 +24,7 @@
         $email = strip_tags($email);
         $pass = strip_tags($pass);
 
-        // function to validate email 
-        function isValidEmail($email)
-        {
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+ 
 
         //validate email and password
         if (isset($email, $pass))  {
