@@ -7,11 +7,19 @@
     <title>Document</title>
 </head>
 <body>
+    <!-- Single File -->
 <form action="files.php" method="post" enctype="multipart/form-data">
     <input type="file" name="fichier">
     <button>Envoyer</button>
 
 </form>    
+
+<!-- Multiple Files -->
+
+<form action="files.php" method="post" enctype="multipart/form-data">
+    <input type="file" name="fichier[]" multiple>
+    <button>Envoyer</button>
+</form>  
 
 </body>
 </html>
