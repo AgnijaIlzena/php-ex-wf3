@@ -24,8 +24,8 @@
 </head>
 
 <body>
-    <form action="image3.php" method="post" enctype="multipart/form-data">
-        <input type="file" name="myfile3">
+    <form action="image.php" method="post" enctype="multipart/form-data">
+        <input type="file" name="myfile">
         <input type="text" name="userFileName">
         <button>send</button>
     </form>
