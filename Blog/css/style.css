@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Text&family=Roboto:wght@300;400;500&display=swap');
+
+:root {
+
+    --yellow: rgba(255,216,0,1);
+    --orange: rgba(255,70,0,1);
+    --pink: rgba(178,0,158,1);
+    --violet: rgba(134,0,255,1);
+    --shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  
+}
+
+body {
+    font-family: 'DM Serif Text', serif;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+}
+
+.sound-title,
+h1 {
+    font-family: 'DM Serif Text', serif;
+font-size: 3rem;
+}
+
+p,
+a {
+    font-family: 'Roboto', sans-serif;
+}
+
+article img {
+    height: 300px;
+    object-fit: cover;
+}
+/*
+.carousel-container {
+ position: relative;
+}
+*/
+
+.carousel-img {
+ /*   position: absolute;*/
+    height: 200px;
+    object-fit: cover;
+}
+
+.gradient {
+    background: linear-gradient(to right, var(--yellow) 0%, var(--orange) 33%, var(--pink) 36%, var(--violet) 100%);
+  height: 4px;
+}
+
+/* PAGE */
+
+form input,
+form textarea {
+    border-top-style: none !important;
+    border-left-style: none !important;
+    border-right-style: none !important;
+}
+
+article p {
+    text-align: justify;
+    line-height: rem;
+}
+
+section h1 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 3rem;
+}
+
+@media screen and (min-width: 992px) {
+    .carousel-img {
+        height: 400px;
+        object-fit: cover;
+    }
+
+   .page-article a,
+   .date  {
+        text-align: center;
+    }
+
+
+}
+
+
+
+
+
+
