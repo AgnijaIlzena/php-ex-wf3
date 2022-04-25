@@ -1,6 +1,6 @@
 <?php
 
-require_once 'functions.php';
+
 /**
  * Dans une page « index.php », créer un formulaire contenant un champ de type « file » et un
  * champs de type texte.
@@ -35,12 +35,17 @@ $typeExtension = [
             //move_uploaded_file($_FILES['myfile']['tmp_name'], "uploads/{$_FILES['myfile']['name']}"); // old upload version
             
             $newFileName = (!empty($_POST['userFileName'])) ? "{$_POST['userFileName']}.$extension" : $_FILES['myfile']['name'];
+           
+           // verifiez si image exist deja
             if (!file_exists("uploads/$newFileName")) {
                 move_uploaded_file($_FILES['myfile']['tmp_name'], "uploads/$newFileName");
             }
 
+            // Cretion de la miniature
+            require_once 'functions.php';
+
             $imageSource = "uploads/$newFileName";
-            $destImagePath ="thumbs/$newFileName";
+            $destImagePath ="thumbs/$newFileName";  // OU "thumbs/min_$newFileName";
             createThumb($imageSource, $destImagePath, $width = 150, $height = null);
            
         } else {
@@ -93,11 +98,13 @@ $typeExtension = [
         <?php else: ?>
 
             <img src="thumbs/<?php echo $newFileName ?>" alt="random picture"> 
-                       
+                    
             <form action="delete.php" method="post">
                 <input type="hidden" name = "thisimagename" value = "<?php echo $newFileName ?>">
                 <button type="submit">delete</button>
-            </form>        
+            </form>  
+            
+            <a href="blank.php?file=<?php echo $newFileName ?>">delete this image (url GET global)</a>
             
         <?php endif; ?> 
     
