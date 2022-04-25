@@ -28,7 +28,7 @@
 
   for($i=0; $i<20; $i++) {
       $query = $db->prepare('INSERT INTO users (lastName, firstName, email, password, role) VALUES (:lastName, :firstName, :email, :password, :role)');
-      $query-bindValue(':lastName', $faker->firstName);
+      $query-bindValue(':lastName', $faker->lastName);
       $query->execute();
   }
 
