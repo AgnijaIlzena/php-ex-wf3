@@ -1,3 +1,6 @@
+# Init
+Composer install
+
 # Projet Blog
 
 Pour ce projet, vous avez la tâche de réaliser l'intégration d'un blog en respectant les normes W3C ainsi que les previews fournis.

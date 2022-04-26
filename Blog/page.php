@@ -1,3 +1,13 @@
+<?php 
+
+require_once 'vendor/autoload.php';
+dump($_GET['id']);
+
+
+dump($_GET);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -75,44 +85,29 @@
                     <article class="page-article">
                         <div class="inner-container w-75 mx-auto ">
                             <a href="#" title="titre de mon article" class="text-dark text-decoration-none ">
-                                <h1 class="py-2">This is a Standart Format Post.</h1>
+                                <h1 class="py-2"><?php echo $_GET['title']?></h1>
                             </a>
 
-                            <p class="text-secondary small date">December 12, 2021</p>
+                            <p class="text-secondary small date"><?php echo $_GET['date']?></p>
 
                             <div class="d-flex align-items-center gap-2 mb-4 justify-content-center  ">
                                 <a href="#" title="Design"
-                                    class="badge rounded-pill bg-primary text-decoration-none">Design</a>
-                                <a href="#" title="Photography"
-                                    class="badge rounded-pill bg-primary text-decoration-none">Photography</a>
+                                    class="badge rounded-pill bg-primary text-decoration-none"><?php echo $_GET['category']?></a>
+
+                                <p><?php echo $_GET['id']?></p>
+
+                                <!-- <a href="#" title="Photography"
+                                    class="badge rounded-pill bg-primary text-decoration-none">Photography</a> -->
                             </div>
                         </div>
-                        <img src="images/viole.jpg" alt="image violon" class="w-100 rounded">
+                        <img src="images/upload/<?php echo $_GET['cover']?>" alt="image violon" class="w-100 rounded">
                         <div class="inner-container w-75 mx-auto">
-                            <p class="mt-4"><strong> Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                                    Exercitationem doloremque, voluptas odit reiciendis consequatur asperiores
-                                    voluptatibus alias, corporis delectus error adipisci debitis officia aliquid modi,
-                                    quae esse nobis non porro.</strong></p>
-                            <p class="py-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat, facere
-                                nisi soluta ad ab magni dolorum non sequi maxime sed debitis rerum neque impedit odit
-                                consequatur dolor aperiam tempora veritatis.
-                                Reprehenderit repellendus nam delectus aspernatur omnis obcaecati nesciunt, facere illum
-                                quis alias atque pariatur ex fugiat molestiae quibusdam eaque nihil asperiores, sequi
-                                incidunt totam aliquam quam. Laboriosam cum aspernatur fugiat!
-                                Quae possimus ipsum quam, saepe rerum iure consequatur dolore voluptatibus ad? Placeat
-                                repellat natus magni, tenetur id ad, saepe inventore nostrum ut doloribus alias
-                                voluptatem nam ullam at veritatis repellendus!
-                                Quae possimus ipsum quam, saepe rerum iure consequatur dolore voluptatibus ad? Placeat
-                                repellat natus magni, tenetur id ad, saepe inventore nostrum ut doloribus alias
-                                voluptatem nam ullam at veritatis repellendus!
-                                Quae possimus ipsum quam, saepe rerum iure consequatur dolore voluptatibus ad? Placeat
-                                repellat natus magni, tenetur id ad, saepe inventore nostrum ut doloribus alias
-                                voluptatem nam ullam at veritatis repellendus!
-                                Vero nam aspernatur ipsam veniam fugit veritatis adipisci, at reprehenderit libero,
-                                voluptatum obcaecati fuga, officiis doloremque asperiores assumenda enim consectetur eum
-                                culpa magni. Omnis delectus, nulla quos magni aspernatur impedit?</p>
+                            <p class="mt-4"><strong> <?php echo $_GET['content']?></strong></p>
+                            <p class="py-2"><?php echo $_GET['content']?></p>
                         </div>
                     </article>
+
+                    
                 </div>
             </div>
         </div>
