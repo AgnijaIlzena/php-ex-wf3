@@ -1,10 +1,28 @@
 <?php 
 
 require_once 'vendor/autoload.php';
-dump($_GET['id']);
+require_once 'connexion.php';
 
+$idnew = htmlspecialchars(strip_tags($_GET['id']));   // this comes from link in index file normaly.
 
-dump($_GET);
+   $query = $db->prepare('SELECT posts.id, posts.title, posts.content, posts.cover, posts.created_at, posts.category_id AS categoryId, categories.name AS category, users.lastName AS userLName, users.firstName AS userFname, DATE_FORMAT(posts.created_at, "%d %M %Y") AS date_c
+   FROM posts 
+   INNER JOIN categories ON categories.id = posts.category_id 
+   INNER JOIN users ON users.id = posts.user_id
+   WHERE posts.id = :id
+   ORDER BY posts.created_at DESC');
+   
+   //$idnew = $_GET['id'];
+   $query->bindValue(':id', $idnew, PDO::PARAM_INT);
+   $query->execute();
+   $article = $query->fetch();
+
+   if (!$article) {
+    header('Location: error.php');
+}
+
+dump($article);
+
 
 ?>
 
@@ -15,7 +33,7 @@ dump($_GET);
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog</title>
+    <title>Blog article: <?php $article['titre']?></title>
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -85,25 +103,25 @@ dump($_GET);
                     <article class="page-article">
                         <div class="inner-container w-75 mx-auto ">
                             <a href="#" title="titre de mon article" class="text-dark text-decoration-none ">
-                                <h1 class="py-2"><?php echo $_GET['title']?></h1>
+                                <h1 class="py-2"><?php echo $article['title']?></h1>
                             </a>
 
-                            <p class="text-secondary small date"><?php echo $_GET['date']?></p>
+                            <p class="text-secondary small date"><?php echo $article['date_c']?></p>
 
                             <div class="d-flex align-items-center gap-2 mb-4 justify-content-center  ">
-                                <a href="#" title="Design"
-                                    class="badge rounded-pill bg-primary text-decoration-none"><?php echo $_GET['category']?></a>
+                                <a href="categories.php?categoryId=<?php echo $article['categoryId']?>" title="Design"
+                                    class="badge rounded-pill bg-primary text-decoration-none"><?php echo $article['category']?></a>
 
-                                <p><?php echo $_GET['id']?></p>
+                                <p> Author : <?php echo $article['userFname'] . ' ' .  $article['userLName'];?> </p>
 
                                 <!-- <a href="#" title="Photography"
                                     class="badge rounded-pill bg-primary text-decoration-none">Photography</a> -->
                             </div>
                         </div>
-                        <img src="images/upload/<?php echo $_GET['cover']?>" alt="image violon" class="w-100 rounded">
+                        <img src="images/upload/<?php echo $article['cover']?>" alt="image violon" class="w-100 rounded">
                         <div class="inner-container w-75 mx-auto">
-                            <p class="mt-4"><strong> <?php echo $_GET['content']?></strong></p>
-                            <p class="py-2"><?php echo $_GET['content']?></p>
+                            <p class="mt-4"><strong> <?php echo $article['content']?></strong></p>
+                            <p class="py-2"><?php echo $article['content']?></p>
                         </div>
                     </article>
 

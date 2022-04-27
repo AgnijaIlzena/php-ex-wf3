@@ -1,8 +1,27 @@
 <?php
 
 require_once 'database/requet.php';
+require_once 'vendor/autoload.php';
 
-?>
+//if (!isset($categoryId) && !empty($categoryId)) 
+
+$categoryId = htmlspecialchars(strip_tags($_GET['categoryId']));  // this comes from link in index file tranfering data with Global GET variable.
+$query = $db->prepare('SELECT posts.id, posts.title, posts.content, posts.cover, posts.created_at, posts.category_id AS categoryId, categories.name AS category, users.lastName AS userLName, users.firstName AS userFname, DATE_FORMAT(posts.created_at, "%d %M %Y") AS date_c
+FROM posts 
+INNER JOIN categories ON categories.id = posts.category_id 
+INNER JOIN users ON users.id = posts.user_id 
+WHERE posts.category_id = :idcategory
+ORDER BY posts.created_at DESC');
+   $query->bindValue(':idcategory', $categoryId, PDO::PARAM_INT);
+   $query->execute();
+   $categoryArticles = $query->fetchAll();
+
+     if (!$categoryArticles) {
+     header('Location: error.php');
+   }
+
+   dump($categoryArticles);
+ ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,10 +49,11 @@ require_once 'database/requet.php';
       <!-- Page Titles -->
       <div class="row d-flex align-items-end">
         <div class="col-6 col-lg-12 text-start text-lg-center ">
-          <a href="/index.php" titile="Sound." class="text-white text-decoration-none sound-title">
+          <a href="#" titile="Sound. Category name" class="text-white text-decoration-none sound-title">
             Sound.
           </a>
         </div>
+
         <!-- hamburger -->
         <div class="col-6 d-block d-lg-none text-end ">
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
@@ -48,10 +68,10 @@ require_once 'database/requet.php';
           <nav class="my-3">
             <ul class="nav d-flex align-items-center justify-content-center gap-5">
               <li class="nav-item">
-                <a class="nav-link text-secondary" href="/index.php">Home</a>
+                <a class="nav-link text-secondary" href="#">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-secondary" href="/categories.php">Categories</a>
+                <a class="nav-link text-secondary" href="#">Categories</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link text-secondary" href="#">Styles</a>
@@ -65,34 +85,10 @@ require_once 'database/requet.php';
             </ul>
           </nav>
         </div>
-        <!-- Carousel -->
-        <div class="col-12">
-          <div class="row  d-flex align-items-center ">
 
-            <!-- Arrow left -->
-            <div class="col-lg-3  d-none d-lg-block text-end" id="fleshGauche">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
-                class="bi bi-caret-left text-white" viewBox="0 0 16 16">
-                <path
-                  d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z" />
-              </svg>
-            </div>
+        <!-- List of categories. -->
+ <!-- TO FILL -->
 
-            <!-- Carousel Image -->
-            <div class="col-12 col-lg-6 pt-4 pt-lg-0 carousel-container">
-              <img src="images/wolfs.jpg" alt="random slide" class="w-100 rounded carousel-img" id="carouselImg">
-            </div>
-
-            <!-- Arrow right -->
-            <div class="col-lg-3 d-none d-lg-block text-start" id="fleshDroite">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
-                class="bi bi-caret-right text-white" viewBox="0 0 16 16">
-                <path
-                  d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z" />
-              </svg>
-            </div>
-          </div>
-        </div>
 
       </div>
     </div>
@@ -101,48 +97,46 @@ require_once 'database/requet.php';
 
   <!-- MAIN -->
   <main class="py-5">
+
+
     <div class="container">
 
-      <div class="row">
+    <h3 class="pb-3 border-bottom">Category: <?php echo $categoryArticles[0]['category']?></h3>
+
+       <div class="row">
         <!-- CARD -->
 
 
 
- <?php  foreach($blogPosts as $blogPost): ?>
+ <?php 
+foreach($categoryArticles as $categoryArticle): ?>
+
+
 
     <div class="col-12 col-lg-6 d-flex justify-content-center pb-5">
       <article>
 
-          <?php
-            $id=$blogPost['id'];
-            $title=$blogPost['title'];
-            $cover=$blogPost['cover'];
-            $date = $blogPost['date_c'];
-            $category = $blogPost['category'];
-            $categoryId = $blogPost['categoryId'];
-            //dump($categoryId);
-            $content = $blogPost['content'];
-            $authorFname = $blogPost['userFname'];
-            $authorLname = $blogPost['userLName'];
-          ?>
 
-            <a href="page.php?id=<?php echo $id ?>" title="titre de mon article" class="text-dark text-decoration-none">
-              <img src="Images/upload/<?php echo $cover?>"  alt="image violon" class="w-100 rounded">
-              <h1 class="py-2"><?php echo $title ?></h1>
+
+            <a href="page.php?id=<?php echo $categoryArticle['id']; ?>" title="titre de mon article" class="text-dark text-decoration-none">
+              <img src="Images/upload/<?php echo $categoryArticle['cover']?>"  alt="cover image" class="w-100 rounded">
+              <h1 class="py-2"><?php echo $categoryArticle['title']?></h1>
             </a>
-            <p class="text-secondary"><?php echo $date ?></p>                
+            <p class="text-secondary"><?php echo $categoryArticle['date_c']?></p>                
                    
-            <p class="py-2"><?php echo substr($content,0,250); ?></p>
+            <p class="py-2"><?php echo substr("{$categoryArticle['content']}",0,250); ?></p>
 
             <div class="d-flef align-items-center gap-2">
             <!-- <a href="#" title="Design" class="badge rounded-pill bg-primary text-decoration-none">Design</a>
             <a href="#" title="Photography" class="badge rounded-pill bg-primary text-decoration-none">Photography</a> -->
-            <a href="categories.php?categoryId=<?php echo $categoryId ?>" title="Photography" class="badge rounded-pill bg-primary text-decoration-none"><?php echo $category?></a>
+            <a href="#" title="Photography" class="badge rounded-pill bg-primary text-decoration-none"><?php echo $categoryArticle['category']?></a>
           </div>
         </article>
       </div>
 
-  <?php endforeach;?>        
+
+  <?php endforeach;  
+  ?>        
 
       </div>
     </div>
@@ -157,5 +151,3 @@ require_once 'database/requet.php';
 </body>
 
 </html>
-
-
