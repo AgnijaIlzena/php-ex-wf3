@@ -2,14 +2,6 @@
 
 //CREATE INSERT SQL REQUET - this is seperate
 
-// CATEGORIES requete - this requete need to fill manualy before
-$query = $db->prepare('INSERT INTO categories (name) VALUES (:name)');
-$query->bindValue(':name', $something);
-$query->execute;
-
-//USERS requete
-//need to choose only one id which is relevant to Admin
-
 
 // POSTS requete
 //should verify correct user_id of admin in data base
@@ -30,21 +22,27 @@ $query->execute();
 
 // TREAT TITLE, CONTENT, CATEGORY
 
+//example
+// $title = htmlspecialchars($_POST['title']);
+// $title = strip_tags($title);
 
-$title = htmlspecialchars($_POST['title']);
-$title = strip_tags($title);
+//name empty variables before, adding value null.
 
-$category = htmlspecialchars($_POST['category']);
-$category = strip_tags($category);
+$title = null;
+$category = null;
+$content = null;
 
-$content = htmlspecialchars($_POST['content']);
-$content = strip_tags($content);
+if(!empty($_POST)){
+    $title = htmlspecialchars(strip_tags($_POST['title']));
+    $category = htmlspecialchars(strip_tags($_POST['category']));
+    $content = htmlspecialchars(strip_tags($_POST['content']));
+}
 
-
-if (isset($title, $category, $content )
-&& !empty($title)
+if (!empty($title)
 && !empty($category)
 && !empty($content)
+&& !empty($_FILES['cover'])
+&& !empty($_FILES['cover']['error']=== 0)
 ) {
     //CREATE INSERT SQL REQUET
 } else {

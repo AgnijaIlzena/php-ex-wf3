@@ -25,7 +25,7 @@ $typeExtension = [
     'jpeg' => 'image/jpeg',
     'gif' => 'image/gif',
 ];
-$extension = strtolower(pathinfo($_FILES['myfile']['name'], PATHINFO_EXTENSION));
+$extension = strtolower(pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION));
 $poidsMax = 1 * 1048576;
 
  if (!empty($_FILES['cover']) && $_FILES['cover']['error'] === 0) {
@@ -42,15 +42,17 @@ $poidsMax = 1 * 1048576;
            
 
            // verifiez if image with the same name already exists
-            if (!file_exists("Images/upload/$newFileName")) {
+            if (!file_exists("Images/upload/$newfilename")) {
                 //save a file in upload folder with the new name.
-                move_uploaded_file($_FILES['cover']['tmp_name'], "Images/upload/" . $newfilename);
+                move_uploaded_file($_FILES['cover']['tmp_name'], "../Images/upload/" . $newfilename);
             }
+
+            $imagePath = "../Images/upload/" . $newfilename;
 
             // Cretion de la miniature
             require_once 'functions.php';
-            $imageSource = "Images/upload/$newFileName";
-            $destImagePath ="Images/thumbs/min_$newFileName";  
+            $imageSource = "../Images/upload/$newfilename";
+            $destImagePath ="../Images/thumbs/min_$newfilename";  
             createThumb($imageSource, $destImagePath, $width = 150, $height = null);
            
         } else {
@@ -62,4 +64,35 @@ $poidsMax = 1 * 1048576;
 } else {
     $error = 'File is required';
 }
+
+// USERS ROLE QUERY
+$roleAdmin = 'ROLE_ADMIN';
+$query = $db->prepare('SELECT users.id FROM `users` WHERE users.role = :role_admin');
+$query->bindValue(':role_admin', $roleAdmin);
+$query->execute();
+$role = $query->fetch();
+
+// CATEGORY DATA are provided in FORM
+$categoryId = $_POST['category'];
+
+// POSTS requete
+//should verify correct user_id of admin in data base
+
+$date = date("jS F, Y", strtotime("now")); 
+
+$query = $db->prepare('INSERT INTO posts (title, content, category_id, user_id, cover, created_at) VALUES (:title, :content, :category_id, :user_id, :cover, :created_at)');
+$query->bindValue(':title', $title);
+$query->bindValue(':content', $content);
+$query->bindValue(':category_id', $categoryId); 
+$query->bindValue(':user_id', $role); 
+$query->bindValue(':cover', $imagePath); 
+$query->bindValue(':created_at', $date); 
+$query->execute();
+
+
+
+
+
+
+
 

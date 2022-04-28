@@ -1,4 +1,96 @@
 <?php
+require_once '../connexion.php';
+require_once '../vendor/autoload.php';
+
+$query = $db->query('SELECT categories.name AS categoryname, categories.id AS categoryId FROM categories');
+$categories = $query->fetchAll();
+
+$error = null;
+$title = null;
+$category = null;
+$content = null;
+
+$typeExtension = [
+  'png' => 'image/png',
+  'jpg' => 'image/jpeg',
+  'jpeg' => 'image/jpeg',
+  'gif' => 'image/gif',
+];
+$extension = strtolower(pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION));
+$poidsMax = 1 * 1048576;
+// USERS ROLE QUERY
+$role = 1;
+// CATEGORY DATA are provided in FORM
+$categoryId = $_POST['category'];
+// POSTS requete
+//should verify correct user_id of admin in data base
+$date = date('Y-m-d', strtotime("now")); 
+
+if(!empty($_POST)){
+  $title = htmlspecialchars(strip_tags($_POST['title']));
+  $category = htmlspecialchars(strip_tags($_POST['category']));
+  $content = htmlspecialchars(strip_tags($_POST['content']));
+}
+
+if (!empty($title)
+&& !empty($category)
+&& !empty($content)
+&& !empty($_FILES['cover'])
+&& !empty($_FILES['cover']['error']=== 0)
+) {
+
+  if (!empty($_FILES['cover']) && $_FILES['cover']['error'] === 0) {
+    if (array_key_exists($extension, $typeExtension) && in_array($_FILES['cover']['type'], $typeExtension)) {
+        if ($_FILES['cover']['size'] <= $poidsMax){
+            //move_uploaded_file($_FILES['cover']['tmp_name'], "uploads/{$_FILES['cover']['name']}"); // original first  upload method version, saves file with original filename.
+            
+          //  $newFileName = (!empty($_POST['userFileName'])) ? "{$_POST['userFileName']}.$extension" : $_FILES['cover']['name']; // uploads method with providing new file name for uploaded file when added via POST method form
+  
+  
+          // create new file name to downloaded file. 
+            $fileName = explode('.', $_FILES['cover']['name']);
+            $newfilename = round(microtime(true)) . '.' . end($fileName); 
+           $minNewFilename = 'min_' . $newfilename;
+  
+           // verifiez if image with the same name already exists
+            if (!file_exists("Images/upload/$newfilename")) {
+                //save a file in upload folder with the new name.
+                move_uploaded_file($_FILES['cover']['tmp_name'], "../Images/upload/" . $newfilename);
+            }
+  
+            $imagePath = "../Images/upload/" . $newfilename;
+            $minImagePath = "../Images/thumbs/min_" . $newfilename;
+            
+            // Cretion de la miniature
+            require_once 'functions.php';
+            $imageSource = "../Images/upload/$newfilename";
+            $destImagePath ="../Images/thumbs/min_$newfilename";  
+            createThumb($imageSource, $destImagePath, $width = 150, $height = null);
+           
+        } else {
+            $error = 'Max file size 1Mo exceeded';
+        }
+    } else {
+        $error = 'Wrong file extension!';
+    }
+  } else {
+    $error = 'File is required';
+  }
+  //------------------------------
+
+  $query = $db->prepare('INSERT INTO posts (title, content, category_id, user_id, cover, created_at) VALUES (:title, :content, :category_id, :user_id, :cover, :created_at)');
+  $query->bindValue(':title', $title);
+  $query->bindValue(':content', $content);
+  $query->bindValue(':category_id', $categoryId); 
+  $query->bindValue(':user_id', $role); 
+  $query->bindValue(':cover', $newfilename); 
+  $query->bindValue(':created_at', $date); 
+  $query->execute();
+  //CREATE INSERT SQL REQUET
+} else {
+  $error = 'All fields are required!';
+}
+
 
 
 ?>
@@ -65,22 +157,34 @@
 <div class="row">
     <div class="col-4 container">
         <h2 class="py-3">Add New Article</h2>
-        <form action="add.php" method="post" enctype="multipart/form-data" class="gap-10">
+
+        <!-- ERROR message -->
+        <?php if ($error !== null): ?>
+          <div class="alert alert-danger">
+              <?php echo $error; ?>
+          </div>
+       <?php endif; ?>
+
+
+        <form action="" method="post" enctype="multipart/form-data" class="gap-10">
 
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" class="form-control" id="title" placeholder="Title of article" name="title">
+                <input type="text" class="form-control" id="title" placeholder="Title of article" name="title" value="<?php echo $title; ?>">
                 <!-- <small id="emailHelp" class="form-text text-muted">...</small> -->
             </div>
 
             <div class="form-group">
             <label class="mr-sm-2" for="category">Category</label>
+           
                 <select class="custom-select mr-sm-2" id="category" name="category">
                     <option selected>Choose...</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>            
+                    <?php foreach($categories as $categori): ?>
+                    <option value="<?php echo $categori['categoryId'];?>" <?php echo ($category !== null && $category == $categori['categoryId']) ? 'selected' : null; ?>><?php echo $categori['categoryname'];?></option>
+                    <?php endforeach; ?>    
+                </select>     
+                  
+               
             </div>
 
             <div class="form-group">
@@ -89,12 +193,14 @@
             </div>
 
             <div class="form-group">
-                <textarea name="content" id="content" cols="70" rows="10" placeholder="Input text" ></textarea>
-                <!-- <label for="content">Content</label>                -->
+                <textarea name="content" id="content" cols="70" rows="10" placeholder="Input text" ><?php echo $content; ?></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+        <div>
+          <img src="<?php echo $minImagePath ?>" alt="image icon">
+        </div>
   </div>
 </div>
 </main>
