@@ -2,6 +2,10 @@
 require_once '../connexion.php';
 require_once '../vendor/autoload.php';
 
+$query = $db->query('SELECT * FROM categories');
+$query->execute();
+$categories = $query->fetchAll();
+
 $idpost = $_GET['idpost'];
 dump($_GET['idpost']);
 $query =$db->prepare('SELECT posts.id, posts.title, posts.cover, posts.content, categories.name AS categoryName, categories.id AS categoryId FROM posts
@@ -11,6 +15,8 @@ ORDER BY posts.created_at DESC');
 $query->bindValue(':idpost', $idpost, PDO::PARAM_INT);
 $query->execute();
 $post = $query->fetch();
+
+
 
 $error = null;
 $title = $post['title'];
@@ -191,8 +197,9 @@ dump($_POST);
           <select class="form-select" id="category" name="category">
             <option>Choose the category</option>
 
+        
             <?php foreach ($categories as $categori) : ?>
-              <option value="<?php echo $post['categoryId']; ?>" ><?php echo $post['category']; ?></option>
+              <option value="<?php echo $categori['id']; ?>" ><?php echo $categori['name']; ?></option>
             <?php endforeach; ?>
 
           </select>
