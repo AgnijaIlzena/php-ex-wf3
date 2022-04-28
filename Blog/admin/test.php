@@ -14,8 +14,7 @@ $extension = strtolower(pathinfo($_FILES['myfile']['name'], PATHINFO_EXTENSION))
  if (!empty($_FILES['cover']) && $_FILES['cover']['error'] === 0) {
     if (array_key_exists($extension, $typeExtension) && in_array($_FILES['cover']['type'], $typeExtension)) {
         if ($_FILES['cover']['size'] <= $poidsMax){
-            //move_uploaded_file($_FILES['myfile']['tmp_name'], "uploads/{$_FILES['myfile']['name']}"); // old upload version
-            
+                     
           //  $newFileName = (!empty($_POST['userFileName'])) ? "{$_POST['userFileName']}.$extension" : $_FILES['myfile']['name'];
 
           $fileName = explode('.', $_FILES['cover']['name']);
