@@ -1,17 +1,4 @@
- <!-- table with 4 colons
- id article
- tirtre article
- article date create_
- edit and delete 
-
- design
-
- in table link to add article
- new page with form which allows to add article
- -->
-
- <!-- error 404 this article do not exists -->
- <?php
+<?php
 require_once '../vendor/autoload.php';
 require_once '../connexion.php';
 
@@ -19,7 +6,6 @@ require_once '../connexion.php';
 $query = $db->query('SELECT * FROM posts');
 $blogPosts = $query->fetchAll();
 
-dump($blogPosts);
 ?>
 
  <!DOCTYPE html>
@@ -44,10 +30,10 @@ dump($blogPosts);
     <div class="container">
 
       <!-- Page Titles -->
-      <div class="row d-flex align-items-end">
+      <div class="row ">
         <div class="col-6 col-lg-12 text-start text-lg-center ">
-          <a href="/index.php" titile="Sound." class="text-white text-decoration-none sound-title">
-            Administrator Space
+          <a href="index.php" titile="Sound." class="text-white text-decoration-none h1 sound-title">
+            Sound. <span class="text-danger fs-4">Administration</span>
           </a>
         </div>
         <!-- hamburger -->
@@ -61,13 +47,13 @@ dump($blogPosts);
 
         <div class="col-12 d-none d-lg-block">
           <!-- Navigation Bar -->
-          <nav class="my-3">
-            <ul class="nav d-flex align-items-center justify-content-center gap-5">
-              <li class="nav-item">
-                <a class="nav-link text-secondary" href="/index.php">Home</a>
+          <nav>
+            <ul class="nav d-flex align-items-center justify-content-center gap-5 pt-3 m-0">
+              <li >
+                <a class="nav-link text-secondary" href="../index.php">Blog</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link text-secondary" href="/categories.php">Articles</a>
+              <li >
+                <a class="nav-link text-secondary" href="index.php">Articles</a>
               </li>
             </ul>
           </nav>
@@ -79,17 +65,30 @@ dump($blogPosts);
   </header>
   <div class="gradient"></div>    
   
-<main>
+<main class="py-5">
     <div class="container">
-    <h2>Edit Articles</h2>
-    <a href="#" class="btn btn-succes">new article</a>
-<table class="table">
+
+    <div class="d-flex align-items-center justify-content-between pb-4">
+                    <h3 class="pb-3">Edit Articles</h3>
+                    <a href="./add.php" title="Ajouter un article" class="btn btn-success">
+                        New article
+                    </a>
+                </div>
+
+                <?php 
+                if (isset($_GET['successAd'])): ?>
+                <div class="alert alert-success mb-4">
+                  Article is succesfully added !
+                </div>
+                <?php endif; ?>
+
+<table class="table table-striped table-hover">
 <thead>
-        <tr>
-            <th>ID</th>
+        <tr class="table-dark">
+            <th>#</th>
             <th>TITLE</th>
             <th>CREATED AT</th>
-            <th>ACTION</th>
+            <th>OPTIONS</th>
         </tr>
     </thead>
     <tbody>
@@ -97,12 +96,18 @@ dump($blogPosts);
     <?php foreach($blogPosts as $blogPost): ?>
 
         <tr>
-            <td><?php echo $blogPost['id'] ?></td>
-            <td><?php echo $blogPost['title'] ?></td>
-            <td><?php echo $blogPost['created_at'] ?></td>
-            <td>
-                <button class="btn btn-warning">edit</button>
-                <a href="deleteimage.php?idpost=<?php echo $blogPost['id'] ?>" class="btn btn-danger">delete</a>
+            <td class="py-4" scope="row"><?php echo $blogPost['id'] ?></td>
+            <td class="py-4"><?php echo $blogPost['title'] ?></td>
+            <td class="py-4"><?php echo $blogPost['created_at'] ?></td>
+            <td class="py-3">
+
+            <a href="edit.php?idpost=<?php echo $blogPost['id'] ?>" title="Edit" class="btn btn-secondary">
+              Edit
+            </a>
+            <a href="deleteimage.php?idpost=<?php echo $blogPost['id'] ?>" title="Delete" class="ps-2 btn btn-outline-danger">
+                Delete this article
+            </a>
+                
             </td>
         </tr>
 

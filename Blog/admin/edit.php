@@ -2,13 +2,23 @@
 require_once '../connexion.php';
 require_once '../vendor/autoload.php';
 
-$query = $db->query('SELECT categories.name AS categoryname, categories.id AS categoryId FROM categories');
-$categories = $query->fetchAll();
+$idpost = $_GET['idpost'];
+dump($_GET['idpost']);
+$query =$db->prepare('SELECT posts.id, posts.title, posts.cover, posts.content, categories.name AS categoryName, categories.id AS categoryId FROM posts
+INNER JOIN categories ON categories.id = posts.category_id
+WHERE posts.id = :idpost
+ORDER BY posts.created_at DESC');
+$query->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+$query->execute();
+$post = $query->fetch();
 
 $error = null;
-$title = null;
-$category = null;
-$content = null;
+$title = $post['title'];
+$category = $post['categoryName'];
+$categoryId = $post['categoryId'];
+$content = $post['content'];;
+$image = $post['cover'];
+$path = "../Images/thumbs/min_";
 
 $typeExtension = [
   'png' => 'image/png',
@@ -30,8 +40,6 @@ if (!empty($_POST)) {
   $category = htmlspecialchars(strip_tags($_POST['category']));
   $content = htmlspecialchars(strip_tags($_POST['content']));
 }
-
-
 
 if (
   !empty($title)
@@ -79,27 +87,26 @@ if (
   } else {
     $error = 'File is required';
   }
-  //------------------------------
-
-  // CATEGORY DATA are provided in FORM
-$categoryId = $_POST['category'];
-
-  $query = $db->prepare('INSERT INTO posts (title, content, category_id, user_id, cover, created_at) VALUES (:title, :content, :category_id, :user_id, :cover, :created_at)');
-  $query->bindValue(':title', $title);
-  $query->bindValue(':content', $content);
-  $query->bindValue(':category_id', $categoryId);
-  $query->bindValue(':user_id', $role);
-  $query->bindValue(':cover', $newfilename);
-  $query->bindValue(':created_at', $date);
-  $query->execute();
   
-  header('Location: index.php?successAdd=1');
+// UPDATE SQL query
+$categoryId = $_POST['category'];
+$date = date('Y-m-d', strtotime("now"));
+$role = 1;
+
+$query = $db->prepare('UPDATE posts SET title = :title, content = :content, category_id = :category_id, user_id = :user_id, cover= :cover, created_at= :created_at WHERE id = ":idpost"');
+$query->bindValue(':title', $title);
+$query->bindValue(':content', $content);
+$query->bindValue(':category_id', $categoryId);
+$query->bindValue(':user_id', $role);
+$query->bindValue(':cover', $newfilename);
+$query->bindValue(':created_at', $date);
+$query->execute();
 
 } else {
   $error = 'All fields are required!';
 }
 
-
+dump($_POST);
 
 ?>
 
@@ -161,7 +168,7 @@ $categoryId = $_POST['category'];
   <main class="my-5">
     <div class="container">
 
-      <h2 class="py-3">Add New Article</h2>
+      <h2 class="py-3">Edit Article: <?php ?> </h2>
 
       <!-- ERROR message -->
       <?php if ($error !== null) : ?>
@@ -185,7 +192,7 @@ $categoryId = $_POST['category'];
             <option>Choose the category</option>
 
             <?php foreach ($categories as $categori) : ?>
-              <option value="<?php echo $categori['categoryId']; ?>" <?php echo ($category !== null && $category == $categori['categoryId']) ? 'selected' : null; ?>><?php echo $categori['categoryname']; ?></option>
+              <option value="<?php echo $post['categoryId']; ?>" ><?php echo $post['category']; ?></option>
             <?php endforeach; ?>
 
           </select>
@@ -201,14 +208,16 @@ $categoryId = $_POST['category'];
           </div>
         </div>
 
+        <div>
+          <img src="<?php echo $path . $image ?>" alt="image icon">
+        </div>
+
         <div class="mb3">
           <label for="content" class="form-label">Content</label>
           <textarea class="form-control" name="content" id="content" rows="10"><?php echo $content; ?></textarea>
         </div>
-        <div>
-          <img src="<?php echo $minImagePath ?>" alt="image icon">
-        </div>
-        <button type="submit" class="btn btn-primary">Create an article</button>
+
+        <button type="submit" class="btn btn-primary">Submit edited article</button>
       </form>
 
 
