@@ -29,75 +29,77 @@ if (!empty($_POST)) {
   $title = htmlspecialchars(strip_tags($_POST['title']));
   $category = htmlspecialchars(strip_tags($_POST['category']));
   $content = htmlspecialchars(strip_tags($_POST['content']));
-}
 
-
-
-if (
-  !empty($title)
-  && !empty($category)
-  && !empty($content)
-  && !empty($_FILES['cover'])
-  && !empty($_FILES['cover']['error'] === 0)
-) {
-
-  $extension = strtolower(pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION));
-
-  if (!empty($_FILES['cover']) && $_FILES['cover']['error'] === 0) {
-    if (array_key_exists($extension, $typeExtension) && in_array($_FILES['cover']['type'], $typeExtension)) {
-      if ($_FILES['cover']['size'] <= $poidsMax) {
-        //move_uploaded_file($_FILES['cover']['tmp_name'], "uploads/{$_FILES['cover']['name']}"); // original first  upload method version, saves file with original filename.
-
-        //  $newFileName = (!empty($_POST['userFileName'])) ? "{$_POST['userFileName']}.$extension" : $_FILES['cover']['name']; // uploads method with providing new file name for uploaded file when added via POST method form
-
-
-        // create new file name to downloaded file. 
-        $fileName = explode('.', $_FILES['cover']['name']);
-        $newfilename = round(microtime(true)) . '.' . end($fileName);
-        $minNewFilename = 'min_' . $newfilename;
-
-        // verifiez if image with the same name already exists
-        if (!file_exists("Images/upload/$newfilename")) {
-          //save a file in upload folder with the new name.
-          move_uploaded_file($_FILES['cover']['tmp_name'], "../Images/upload/" . $newfilename);
+  if (
+    !empty($title)
+    && !empty($category)
+    && !empty($content)
+    && !empty($_FILES['cover'])
+    && !empty($_FILES['cover']['error'] === 0)
+  ) {
+  
+    $extension = strtolower(pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION));
+  
+    if (!empty($_FILES['cover']) && $_FILES['cover']['error'] === 0) {
+      if (array_key_exists($extension, $typeExtension) && in_array($_FILES['cover']['type'], $typeExtension)) {
+        if ($_FILES['cover']['size'] <= $poidsMax) {
+          //move_uploaded_file($_FILES['cover']['tmp_name'], "uploads/{$_FILES['cover']['name']}"); // original first  upload method version, saves file with original filename.
+  
+          //  $newFileName = (!empty($_POST['userFileName'])) ? "{$_POST['userFileName']}.$extension" : $_FILES['cover']['name']; // uploads method with providing new file name for uploaded file when added via POST method form
+  
+  
+          // create new file name to downloaded file. 
+          $fileName = explode('.', $_FILES['cover']['name']);
+          $newfilename = round(microtime(true)) . '.' . end($fileName);
+          $minNewFilename = 'min_' . $newfilename;
+  
+          // verifiez if image with the same name already exists
+          if (!file_exists("Images/upload/$newfilename")) {
+            //save a file in upload folder with the new name.
+            move_uploaded_file($_FILES['cover']['tmp_name'], "../Images/upload/" . $newfilename);
+          }
+  
+          $imagePath = "../Images/upload/" . $newfilename;
+          $minImagePath = "../Images/thumbs/min_" . $newfilename;
+  
+          // Cretion de la miniature
+          require_once 'functions.php';
+          $imageSource = "../Images/upload/$newfilename";
+          $destImagePath = "../Images/thumbs/min_$newfilename";
+          createThumb($imageSource, $destImagePath, $width = 150, $height = null);
+        } else {
+          $error = 'Max file size 1Mo exceeded';
         }
-
-        $imagePath = "../Images/upload/" . $newfilename;
-        $minImagePath = "../Images/thumbs/min_" . $newfilename;
-
-        // Cretion de la miniature
-        require_once 'functions.php';
-        $imageSource = "../Images/upload/$newfilename";
-        $destImagePath = "../Images/thumbs/min_$newfilename";
-        createThumb($imageSource, $destImagePath, $width = 150, $height = null);
       } else {
-        $error = 'Max file size 1Mo exceeded';
+        $error = 'Wrong file extension!';
       }
     } else {
-      $error = 'Wrong file extension!';
+      $error = 'File is required';
     }
-  } else {
-    $error = 'File is required';
-  }
-  //------------------------------
-
-  // CATEGORY DATA are provided in FORM
-$categoryId = $_POST['category'];
-
-  $query = $db->prepare('INSERT INTO posts (title, content, category_id, user_id, cover, created_at) VALUES (:title, :content, :category_id, :user_id, :cover, :created_at)');
-  $query->bindValue(':title', $title);
-  $query->bindValue(':content', $content);
-  $query->bindValue(':category_id', $categoryId);
-  $query->bindValue(':user_id', $role);
-  $query->bindValue(':cover', $newfilename);
-  $query->bindValue(':created_at', $date);
-  $query->execute();
+    //------------------------------
   
-  header('Location: index.php?successAdd=1');
-
-} else {
-  $error = 'All fields are required!';
+    // CATEGORY DATA are provided in FORM
+  $categoryId = $_POST['category'];
+  
+    $query = $db->prepare('INSERT INTO posts (title, content, category_id, user_id, cover, created_at) VALUES (:title, :content, :category_id, :user_id, :cover, :created_at)');
+    $query->bindValue(':title', $title);
+    $query->bindValue(':content', $content);
+    $query->bindValue(':category_id', $categoryId);
+    $query->bindValue(':user_id', $role);
+    $query->bindValue(':cover', $newfilename);
+    $query->bindValue(':created_at', $date);
+    $query->execute();
+    
+    header('Location: index.php?successAdd=1');
+  
+  } else {
+    $error = 'All fields are required!';
+  }
 }
+
+
+
+
 
 
 

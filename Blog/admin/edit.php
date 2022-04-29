@@ -7,23 +7,23 @@ $query = $db->query('SELECT * FROM categories');
 $query->execute();
 $categories = $query->fetchAll();
 
+//dump($idpost);  here is Info about id:5 only 
+
 $idpost = $_GET['idpost'];
-dump($_GET['idpost']);
-$query =$db->prepare('SELECT posts.id, posts.title, posts.cover, posts.content, categories.name AS categoryName, categories.id AS categoryId FROM posts
+$query = $db->prepare('SELECT posts.id, posts.title, posts.cover, posts.content, categories.name AS categoryName, categories.id AS categoryId FROM posts
 INNER JOIN categories ON categories.id = posts.category_id
 WHERE posts.id = :idpost
 ORDER BY posts.created_at DESC');
 $query->bindValue(':idpost', $idpost, PDO::PARAM_INT);
 $query->execute();
 $post = $query->fetch();
-
-
+//dump($post); // here is info about 1 particular post  with various information. The one I chose in edit.php with id.
 
 $error = null;
 $title = $post['title'];
 $category = $post['categoryName'];
 $categoryId = $post['categoryId'];
-$content = $post['content'];;
+$content = $post['content'];
 $image = $post['cover'];
 $path = "../Images/thumbs/min_";
 
@@ -37,83 +37,73 @@ $typeExtension = [
 $poidsMax = 1 * 1048576;
 // USERS ROLE QUERY
 $role = 1;
-
-// POSTS requete
-//should verify correct user_id of admin in data base
 $date = date('Y-m-d', strtotime("now"));
+
 
 if (!empty($_POST)) {
   $title = htmlspecialchars(strip_tags($_POST['title']));
   $category = htmlspecialchars(strip_tags($_POST['category']));
   $content = htmlspecialchars(strip_tags($_POST['content']));
-}
 
-if (
-  !empty($title)
-  && !empty($category)
-  && !empty($content)
-  && !empty($_FILES['cover'])
-  && !empty($_FILES['cover']['error'] === 0)
-) {
+  if (
+    !empty($title)
+    && !empty($category)
+    && !empty($content)
+   ) {
+     
+     $extension = strtolower(pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION));
+      if (!empty($_FILES['cover']) && $_FILES['cover']['error'] === 0) {          
+          unlink("Images/upload/{$image}");
+          unlink("Images/thumbs/min_{$image}");                      
 
-  $extension = strtolower(pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION));
-
-  if (!empty($_FILES['cover']) && $_FILES['cover']['error'] === 0) {
-    if (array_key_exists($extension, $typeExtension) && in_array($_FILES['cover']['type'], $typeExtension)) {
-      if ($_FILES['cover']['size'] <= $poidsMax) {
-        //move_uploaded_file($_FILES['cover']['tmp_name'], "uploads/{$_FILES['cover']['name']}"); // original first  upload method version, saves file with original filename.
-
-        //  $newFileName = (!empty($_POST['userFileName'])) ? "{$_POST['userFileName']}.$extension" : $_FILES['cover']['name']; // uploads method with providing new file name for uploaded file when added via POST method form
-
-
-        // create new file name to downloaded file. 
-        $fileName = explode('.', $_FILES['cover']['name']);
-        $newfilename = round(microtime(true)) . '.' . end($fileName);
-        $minNewFilename = 'min_' . $newfilename;
-
-        // verifiez if image with the same name already exists
-        if (!file_exists("Images/upload/$newfilename")) {
-          //save a file in upload folder with the new name.
-          move_uploaded_file($_FILES['cover']['tmp_name'], "../Images/upload/" . $newfilename);
+      if (array_key_exists($extension, $typeExtension) && in_array($_FILES['cover']['type'], $typeExtension)) {
+        if ($_FILES['cover']['size'] <= $poidsMax) {
+ 
+          $fileName = explode('.', $_FILES['cover']['name']);
+          $newfilename = round(microtime(true)) . '.' . end($fileName);
+          $minNewFilename = 'min_' . $newfilename;
+  
+          // verifiez if image with the same name already exists
+          if (!file_exists("Images/upload/$newfilename")) {
+            //save a file in upload folder with the new name.
+            move_uploaded_file($_FILES['cover']['tmp_name'], "../Images/upload/" . $newfilename);
+          }
+  
+          $imagePath = "../Images/upload/" . $newfilename;
+          $minImagePath = "../Images/thumbs/min_" . $newfilename;
+  
+          // Cretion de la miniature
+          require_once 'functions.php';
+          $imageSource = "../Images/upload/$newfilename";
+          $destImagePath = "../Images/thumbs/min_$newfilename";
+          createThumb($imageSource, $destImagePath, $width = 150, $height = null);
+        } else {
+          $error = 'Max file size 1Mo exceeded';
         }
-
-        $imagePath = "../Images/upload/" . $newfilename;
-        $minImagePath = "../Images/thumbs/min_" . $newfilename;
-
-        // Cretion de la miniature
-        require_once 'functions.php';
-        $imageSource = "../Images/upload/$newfilename";
-        $destImagePath = "../Images/thumbs/min_$newfilename";
-        createThumb($imageSource, $destImagePath, $width = 150, $height = null);
       } else {
-        $error = 'Max file size 1Mo exceeded';
+        $error = 'Wrong file extension!';
       }
     } else {
-      $error = 'Wrong file extension!';
+      $error = 'File is required';
     }
-  } else {
-    $error = 'File is required';
-  }
   
-// UPDATE SQL query
-$categoryId = $_POST['category'];
-$date = date('Y-m-d', strtotime("now"));
-$role = 1;
+    // UPDATE SQL query
 
-$query = $db->prepare('UPDATE posts SET title = :title, content = :content, category_id = :category_id, user_id = :user_id, cover= :cover, created_at= :created_at WHERE id = ":idpost"');
-$query->bindValue(':title', $title);
-$query->bindValue(':content', $content);
-$query->bindValue(':category_id', $categoryId);
-$query->bindValue(':user_id', $role);
-$query->bindValue(':cover', $newfilename);
-$query->bindValue(':created_at', $date);
-$query->execute();
+    $query = $db->prepare('UPDATE posts SET title = :title, content = :content, category_id = :category_id, user_id = :user_id, cover= :cover, created_at= :created_at WHERE id = :idpost');
+    $query->bindValue(':title', $title);
+    $query->bindValue(':content', $content);
+    $query->bindValue(':category_id', $category);
+    $query->bindValue(':user_id', $role);
+    $query->bindValue(':cover', $newfilename);
+    $query->bindValue(':created_at', $date);  
+    $query->bindValue(':idpost', $idpost);
+    $query->execute();
+    header('Location: index.php?successEdit=1');
+  } else {
+    $error = 'Fields Tile, content category are required ';
+  }
 
-} else {
-  $error = 'All fields are required!';
 }
-
-dump($_POST);
 
 ?>
 
@@ -196,11 +186,12 @@ dump($_POST);
         <div class="col mb-3">
           <label class="form-label" for="category">Category</label>
           <select class="form-select" id="category" name="category">
-            <option>Choose the category</option>
+          <!-- value need to indicate here with empty value, so that system see that it is empty and send an error   -->
+          <option value="">Choose the category</option>
 
-        
+
             <?php foreach ($categories as $categori) : ?>
-              <option value="<?php echo $categori['id']; ?>" ><?php echo $categori['name']; ?></option>
+              <option value="<?php echo $categori['id']; ?>"><?php echo $categori['name']; ?></option>
             <?php endforeach; ?>
 
           </select>
