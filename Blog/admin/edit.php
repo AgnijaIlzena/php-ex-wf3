@@ -2,6 +2,7 @@
 require_once '../connexion.php';
 require_once '../vendor/autoload.php';
 
+dump($_GET['idpost']);
 $query = $db->query('SELECT * FROM categories');
 $query->execute();
 $categories = $query->fetchAll();

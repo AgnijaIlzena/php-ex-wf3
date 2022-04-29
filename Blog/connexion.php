@@ -11,7 +11,7 @@
  const DB_USER = 'root';
 
  // mot de pass
- const DB_PASS = '';
+ const DB_PASS = 'developpe';
 
  // Nom de la base de données
  const DB_NAME = 'blog';

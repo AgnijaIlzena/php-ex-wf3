@@ -5,6 +5,7 @@ require_once '../connexion.php';
 
 $query = $db->query('SELECT * FROM posts');
 $blogPosts = $query->fetchAll();
+dump($blogPosts);
 
 ?>
 
@@ -101,7 +102,7 @@ $blogPosts = $query->fetchAll();
             <td class="py-4"><?php echo $blogPost['created_at'] ?></td>
             <td class="py-3">
 
-            <a href="edit.php?idpost=<?php echo $blogPost['id'] ?>" title="Edit" class="btn btn-secondary">
+            <a href="admin/edit.php?idpost=<?php echo $blogPost['id'] ?>" title="Edit" class="btn btn-secondary">
               Edit
             </a>
             <a href="deleteimage.php?idpost=<?php echo $blogPost['id'] ?>" title="Delete" class="ps-2 btn btn-outline-danger">
